@@ -1,0 +1,27 @@
+
+Page :content association
+- should be :has_one
+- klass should be PageScam
+
+Page :sidebar association
+- should be :has_one
+- klass should be PageScam
+
+Product :scam association
+- should be :has_one
+- should have klass of Scam
+
+Scammer
+- should have default scam_class_name of "Scam"
+- #scam_class should create class on demand
+- #scam_class should be an ActiveRecord::Base
+- #scam_class should be a Scammer::Scam
+
+Scammer (with scam_class_name = 'FooScam')
+- #scam_class should create class on demand
+- #scam_class should be an ActiveRecord::Base
+- #scam_class should be a Scammer::Scam
+
+Finished in 0.083765 seconds
+
+13 examples, 0 failures
