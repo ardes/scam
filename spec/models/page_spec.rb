@@ -2,30 +2,11 @@ require File.expand_path(File.join(File.dirname(__FILE__), '../spec_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '../app'))
 require File.expand_path(File.join(File.dirname(__FILE__), '../lib/scammable'))
 
-describe Page, "(an ActiveRecord with has_scams :content, :sidebar)" do
-
-end
-
-describe Page, " :content association" do
-  before do
-    @assoc = Page.reflect_on_association(:content)
-  end
-  
-  it_should_behave_like 'Scammer::Scammable scam association'
-  
-  it 'klass should be PageScam' do
-    @assoc.klass.should == PageScam
+describe Page, "class (has_scams :content, :sidebar)" do
+  it 'should have scam_names [:content, :sidebar]' do
+    Page.scam_names.should == [:content, :sidebar]
   end
 end
 
-describe Page, " :sidebar association" do
-  before do
-    @assoc = Page.reflect_on_association(:sidebar)
-  end
-  
-  it_should_behave_like 'Scammer::Scammable scam association'
-  
-  it 'klass should be PageScam' do
-    @assoc.klass.should == PageScam
-  end
-end
+describe_scam_associations Page, {:content => PageScam, :sidebar => PageScam}
+
