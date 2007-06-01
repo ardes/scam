@@ -7,3 +7,6 @@ require 'spec/rails'
 Spec::Runner.configure do |config|
  # simple aint it.
 end
+
+require File.expand_path(File.join(File.dirname(__FILE__), 'app'))
+require File.expand_path(File.join(File.dirname(__FILE__), 'scam_association'))
