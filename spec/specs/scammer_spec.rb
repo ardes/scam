@@ -2,7 +2,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), '../spec_helper'))
 
 describe Scammer, " creating scam class", :shared => true do  
   it '#scam_class should create class on demand' do
-    (Object.send :remove_const, Scammer.scam_class_name rescue nil)
     Scammer.scam_class.should be_kind_of(Class)
   end
   
