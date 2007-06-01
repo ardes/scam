@@ -4,11 +4,12 @@ describe Scammer::Scammable, ' scam association', :shared => true do
   end
 end
 
-def describe_scam_associations(klass, assocs)
+def describe_scam_associations(scammable_class, assocs)
   assocs.each do |assoc, scam_class|
-    describe klass, " :#{assoc} association" do
+    
+    describe scammable_class, " :#{assoc} association" do
       before do
-        @assoc = klass.reflect_on_association(assoc)
+        @assoc = scammable_class.reflect_on_association(assoc)
       end
   
       it_should_behave_like 'Scammer::Scammable scam association'
@@ -17,5 +18,6 @@ def describe_scam_associations(klass, assocs)
         @assoc.klass.should == scam_class
       end
     end
+  
   end
 end
