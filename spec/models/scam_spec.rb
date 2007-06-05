@@ -1,6 +1,6 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '../spec_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '../app'))
-require File.expand_path(File.join(File.dirname(__FILE__), '../lib/scam'))
+require File.expand_path(File.join(File.dirname(__FILE__), '../shared/scam'))
 
 describe Scam, ' class' do
   before do

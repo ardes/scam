@@ -1,6 +1,6 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '../spec_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '../app'))
-require File.expand_path(File.join(File.dirname(__FILE__), '../lib/scammable'))
+require File.expand_path(File.join(File.dirname(__FILE__), '../shared/scammable'))
 
 describe Product, "class (has_scam)" do
   it 'should have scam_names [:scam]' do

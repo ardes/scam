@@ -15,11 +15,11 @@ describe Scammer, " creating scam class", :shared => true do
 end
 
 describe Scammer do
+  it_should_behave_like "Scammer creating scam class"
+
   it 'should have default scam_class_name of "Scam"' do
     Scammer.scam_class_name.should == 'Scam'
   end
-  
-  it_should_behave_like "Scammer creating scam class"
 end
 
 describe Scammer, " (with scam_class_name = 'FooScam')" do
@@ -30,6 +30,10 @@ describe Scammer, " (with scam_class_name = 'FooScam')" do
   
   it_should_behave_like "Scammer creating scam class"
 
+  it 'should have default scam_class_name of "FooScam"' do
+    Scammer.scam_class_name.should == 'FooScam'
+  end
+  
   after(:all) do
     Scammer.scam_class_name = @saved_name
   end
