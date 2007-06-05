@@ -8,7 +8,7 @@ describe Product, "class (has_scam)" do
   end
 end
 
-describe_scam_associations Product, {:scam => Scam}
+describe_scam_associations Product, :scam
 
 describe Product, ".new" do
   before do

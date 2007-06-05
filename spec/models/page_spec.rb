@@ -8,5 +8,5 @@ describe Page, "class (has_scams :content, :sidebar)" do
   end
 end
 
-describe_scam_associations Page, {:content => PageScam, :sidebar => PageScam}
+describe_scam_associations Page, :content, :sidebar
 
