@@ -2,7 +2,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), '../spec_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '../app'))
 
 describe FunkyPage, "class (< Page | has_scam :funk)" do
-  it 'should have scam_names [:content, :sidebar, :funk, :normal]' do
+  it 'should have scam_names [:content, :sidebar, :funk]' do
     FunkyPage.scam_names.should == [:content, :sidebar, :funk]
   end
 

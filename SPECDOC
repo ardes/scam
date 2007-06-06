@@ -1,60 +1,32 @@
 
-FunkyPage class (< Page | has_scam :funk | has_scam :normal, :class_name => 'Scam')
+Con class
+- should belong to :scam
+
+Con class (migration helpers)
+- #create_table should create cons table
+- #create_table should create indexes for :type, :scam_id, :parent_id and :position
+- #drop_table should drop cons table
+
+FunkyPage class (< Page | has_scam :funk)
 - should have scam_names [:content, :sidebar, :funk, :normal]
-
-FunkyPage :sidebar association
-- should be :has_one
-- klass should be PageScam
-
-FunkyPage :funk association
-- should be :has_one
-- klass should be PageScam
-
-FunkyPage :content association
-- should be :has_one
-- klass should be PageScam
-
-FunkyPage :normal association
-- should be :has_one
-- klass should be Scam
-
-PageScam class
-- #create_table should create scam table
-- #drop_table should drop scam table
+- should have one :content, :sidebar, and :funk Scam association
 
 Page class (has_scams :content, :sidebar)
 - should have scam_names [:content, :sidebar]
-
-Page :sidebar association
-- should be :has_one
-- klass should be PageScam
-
-Page :content association
-- should be :has_one
-- klass should be PageScam
+- should have one :content and :sidebar Scam association
 
 Product class (has_scam)
 - should have scam_names [:scam]
-
-Product :scam association
-- should be :has_one
-- klass should be Scam
+- should have one :scam Scam association
 
 Scam class
-- #create_table should create scam table
-- #drop_table should drop scam table
+- should have many :cons
 
-Scammer
-- should have default scam_class_name of "Scam"
-- #scam_class should create class on demand
-- #scam_class should be an ActiveRecord::Base
-- #scam_class should be a Scammer::Scam
+Scam class (migration helpers)
+- #create_table should create scams table
+- #create_table should create indexes for :type, :scammable_id, and :scammable_type
+- #drop_table should drop scams table
 
-Scammer (with scam_class_name = 'FooScam')
-- #scam_class should create class on demand
-- #scam_class should be an ActiveRecord::Base
-- #scam_class should be a Scammer::Scam
+Finished in 0.051548 seconds
 
-Finished in 0.061343 seconds
-
-28 examples, 0 failures
+14 examples, 0 failures
