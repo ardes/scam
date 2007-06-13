@@ -1,5 +1,6 @@
 # extended into ActiveRecord, adds macros to associate any model with scam(s)
 module Scammable
+  # the default scam class for all ActiveRecords (can be overridden on a per class basis)
   mattr_accessor :scam_class_name
   
   self.scam_class_name = 'Scam'
@@ -13,10 +14,12 @@ module Scammable
 
   alias_method :has_scams, :has_scam
   
+  # set the default scam class for this AciveRecord and its descendents
   def scam_class_name=(class_name)
     write_inheritable_attribute(:scam_class_name, class_name)
   end
   
+  # the default scam class for this AciveRecord and its descendents
   def scam_class_name
     read_inheritable_attribute(:scam_class_name) || write_inheritable_attribute(:scam_class_name, Scammable.scam_class_name)
   end
