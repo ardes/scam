@@ -1,32 +1,53 @@
 
-Con class
-- should belong to :scam
+FunkyPage class (< Page | has_scam :funk | has_scam :simple, :class_name => 'Scam')
+- should have scam_names [:content, :sidebar, :funk, :simple]
+- should have one MarukuScam as :funk
+- should have one Scam as :simple
 
-Con class (migration helpers)
-- #create_table should create cons table
-- #create_table should create indexes for :type, :scam_id, :parent_id and :position
-- #drop_table should drop cons table
+FunkyPage :funk association
+- should be built on demand
+- #scam_name=(of scam type) should replace scam
+- #scam_name=(non Scam) should delegate to current scam's :content
+- should have name == :scam_name
+- should be saved when parent scammable saved
 
-FunkyPage class (< Page | has_scam :funk)
-- should have scam_names [:content, :sidebar, :funk, :normal]
-- should have one :content, :sidebar, and :funk Scam association
-
-Page class (has_scams :content, :sidebar)
+Page class | scam_class_name = 'MarukuScam' | has_scams :content, :sidebar
 - should have scam_names [:content, :sidebar]
-- should have one :content and :sidebar Scam association
+- should have one MarukuScam as :content
+- should have one MarukuScam as :sidebar
+
+Page :content association
+- should be built on demand
+- #scam_name=(of scam type) should replace scam
+- #scam_name=(non Scam) should delegate to current scam's :content
+- should have name == :scam_name
+- should be saved when parent scammable saved
+
+Page :sidebar association
+- should be built on demand
+- #scam_name=(of scam type) should replace scam
+- #scam_name=(non Scam) should delegate to current scam's :content
+- should have name == :scam_name
+- should be saved when parent scammable saved
 
 Product class (has_scam)
-- should have scam_names [:scam]
-- should have one :scam Scam association
+- should have scam names: :scam
+- should have one Scam as :scam
 
-Scam class
-- should have many :cons
+Product :scam association
+- should be built on demand
+- #scam_name=(of scam type) should replace scam
+- #scam_name=(non Scam) should delegate to current scam's :content
+- should have name == :scam_name
+- should be saved when parent scammable saved
 
 Scam class (migration helpers)
-- #create_table should create scams table
-- #create_table should create indexes for :type, :scammable_id, and :scammable_type
 - #drop_table should drop scams table
+- #create_table should create scams table and indexes
 
-Finished in 0.051548 seconds
+Scammable module
+- should have scam_class_name of "Scam"
 
-14 examples, 0 failures
+Finished in 0.109868 seconds
+
+31 examples, 0 failures

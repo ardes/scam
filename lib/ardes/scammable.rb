@@ -41,6 +41,7 @@ module Scammable
     def add_scam(name, options = {})
       raise RuntimeError, "Scam #{name} is already declared in #{self.name}" if scam_names.include? name
       scam_names << name
+      scam_class_name = options.delete(:class_name) || self.scam_class_name
       has_one name, options.reverse_merge(:as => :scammable, :class_name => scam_class_name, :conditions => ["#{Scam.table_name}.name = ?", name])
       
       class_eval <<-end_eval, __FILE__, __LINE__
@@ -50,7 +51,7 @@ module Scammable
         alias_method_chain :#{name}, :build
         
         def #{name}_with_delegation=(arg)
-          arg.is_a?(Scam) ? self.#{name}_without_delegation = arg : self.#{name}.content = arg
+          arg.is_a?(#{scam_class_name}) ? self.#{name}_without_delegation = arg : self.#{name}.content = arg
         end
         alias_method_chain :#{name}=, :delegation
       end_eval
