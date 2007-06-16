@@ -18,7 +18,6 @@ describe FunkyPage, "class (< Page | has_scam :funk | has_scam :simple, :class_n
   end
 end
 
-
 describe FunkyPage, ' :funk association' do
   before { @scammable, @scam_name = FunkyPage.new, :funk }
 

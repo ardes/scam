@@ -1,7 +1,7 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '../spec_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '../app'))
 
-# set @scammable (instance of scammable) and @scam_name (symbol) before using these shared examples
+# set @scammable (instance of scammable) and @scam_name (symbol) before using this shared examples
 describe "Scam association", :shared => true do
   before { @assoc = @scammable.send(@scam_name) }
 

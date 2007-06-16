@@ -1,6 +1,7 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '../spec_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '../app'))
 require File.expand_path(File.join(File.dirname(__FILE__), 'scam_association'))
+require File.expand_path(File.join(File.dirname(__FILE__), 'scammable'))
 
 describe Product, "class (has_scam)" do
   it 'should have scam names: :scam' do
@@ -19,4 +20,9 @@ describe Product, " :scam association" do
   it_should_behave_like 'Scam association'
 end
 
+describe Product, ".new" do
+  before { @scammable = Product.new }
+  
+  it_should_behave_like 'Scammable with scams not loaded'
+end
 

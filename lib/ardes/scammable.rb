@@ -30,6 +30,10 @@ module Scammable
         extend ClassMethods
       end
     end
+    
+    def scam_names
+      self.class.scam_names
+    end
   end
 
   module ClassMethods
