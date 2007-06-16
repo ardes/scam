@@ -77,4 +77,8 @@ describe Scam, '.new' do
   it 'should return {} for #parsed_content' do
     @scam.parsed_content.should == {}
   end
+  
+  it 'should have default_content_type'
+  
+  it 'should call parse(default_content_type) whne #to_s called'
 end
