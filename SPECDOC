@@ -18,6 +18,22 @@ FunkyPage :simple association
 - should have name == :scam_name
 - should be saved when parent scammable saved
 
+MarukuScam
+- should set :parsed_content to {} when :content set
+- should call #to_content(:whatever) when sent #to_<whatever>
+- should raise RuntimeError when sent #to_<whatever>, if parse_to(:whatever) returns nil
+- should respond to #to_whatever
+- should call #to_content when sent #to_s
+- should have default_content_type of :html
+
+MarukuScam saved, with no parsed_content
+- should return parsed html with #to_html
+- should return parsed html with #to_s
+- should update parsed_content and save record with #to_html
+
+MarukuScam saved, with parsed_content
+- should not save record with #to_html
+
 Page class | scam_class_name = 'MarukuScam' | has_scams :content, :sidebar
 - should have scam_names [:content, :sidebar]
 - should have one MarukuScam as :content
@@ -67,13 +83,15 @@ Scam#to_content(:whatever) (with parsed_content[:whatever])
 Scam.new
 - should set :parsed_content to {} when :content set
 - should call #to_content(:whatever) when sent #to_<whatever>
-- should raise RuntimeError if parse_to(:whatever) when sent #to_<whatever>
+- should raise RuntimeError when sent #to_<whatever>, if parse_to(:whatever) returns nil
 - should respond to #to_whatever
+- should call #to_content when sent #to_s
 - should return {} for #parsed_content
+- should return content.to_s with to_s
 
 Scammable module
 - should have scam_class_name of "Scam"
 
-Finished in 0.199714 seconds
+Finished in 0.197187 seconds
 
-47 examples, 0 failures
+59 examples, 0 failures

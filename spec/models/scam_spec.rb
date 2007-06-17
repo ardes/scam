@@ -1,5 +1,6 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '../spec_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '../app'))
+require File.expand_path(File.join(File.dirname(__FILE__), 'scam'))
 
 describe Scam, ' class (migration helpers)' do
   it '#drop_table should drop scams table' do
@@ -12,25 +13,6 @@ describe Scam, ' class (migration helpers)' do
     Scam.connection.should_receive(:add_index).any_number_of_times
     Scam.create_table
   end
-end
-
-describe Scam, :shared => true do
-  it 'should set :parsed_content to {} when :content set' do
-    @scam.should_receive(:parsed_content=).with({})
-    @scam.content = 'Gday'
-  end
-  
-  it 'should call #to_content(:whatever) when sent #to_<whatever>' do
-    @scam.should_receive(:to_content).with(:whatever).and_return('parsed')
-    @scam.to_whatever
-  end
-  
-  it 'should raise RuntimeError if parse_to(:whatever) when sent #to_<whatever>' do
-    @scam.stub!(:parse_to).and_return(nil)
-    lambda { @scam.to_whatever }.should raise_error(RuntimeError)
-  end
-  
-  it { @scam.should respond_to(:to_whatever) }
 end
 
 describe Scam, '#to_content(:whatever) (without parsed_content[:whatever])' do
@@ -79,5 +61,10 @@ describe Scam, '.new' do
   
   it 'should return {} for #parsed_content' do
     @scam.parsed_content.should == {}
+  end
+  
+  it 'should return content.to_s with to_s' do
+    @scam.content = 1
+    @scam.to_s.should == '1'
   end
 end

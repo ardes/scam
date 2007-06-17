@@ -47,6 +47,10 @@ class Scam < ActiveRecord::Base
     end
   end
 
+  def to_s
+    to_content
+  end
+  
   # Rake migration task to create the scam table
   def self.create_table(create_table_options = {})
     connection.create_table(table_name, create_table_options) do |t|
@@ -71,7 +75,4 @@ protected
   def parse_to(content_type, content = self.content)
     content.to_s
   end
-end
-
-class MarukuScam < Scam
 end
