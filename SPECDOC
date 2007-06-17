@@ -11,6 +11,13 @@ FunkyPage :funk association
 - should have name == :scam_name
 - should be saved when parent scammable saved
 
+FunkyPage :simple association
+- should be built on demand
+- #scam_name=(of scam type) should replace scam
+- #scam_name=(non Scam) should delegate to current scam's :content
+- should have name == :scam_name
+- should be saved when parent scammable saved
+
 Page class | scam_class_name = 'MarukuScam' | has_scams :content, :sidebar
 - should have scam_names [:content, :sidebar]
 - should have one MarukuScam as :content
@@ -41,13 +48,32 @@ Product :scam association
 - should have name == :scam_name
 - should be saved when parent scammable saved
 
+Product.new
+- should not attempt to save scams on save
+
 Scam class (migration helpers)
 - #drop_table should drop scams table
 - #create_table should create scams table and indexes
 
+Scam#to_content(:whatever) (without parsed_content[:whatever])
+- should call #parse_to_whatever
+- should call parse_to(:whatever) if #parse_whatever is undefined
+- should store the results of parse_to(:whetever) in parsed_content[:whatever] and save record
+
+Scam#to_content(:whatever) (with parsed_content[:whatever])
+- should return parsed_content[:whatever]
+- should not save record
+
+Scam.new
+- should set :parsed_content to {} when :content set
+- should call #to_content(:whatever) when sent #to_<whatever>
+- should raise RuntimeError if parse_to(:whatever) when sent #to_<whatever>
+- should respond to #to_whatever
+- should return {} for #parsed_content
+
 Scammable module
 - should have scam_class_name of "Scam"
 
-Finished in 0.109868 seconds
+Finished in 0.199714 seconds
 
-31 examples, 0 failures
+47 examples, 0 failures
