@@ -1,23 +1,40 @@
-describe Scam, :shared => true do
-  it 'should set :parsed_content to {} when :content set' do
-    @scam.should_receive(:parsed_content=).with({})
+describe 'All Scams', :shared => true do
+  it 'should set :parsed_content_cache to {} when :content set' do
+    @scam.should_receive(:parsed_content_cache=).with({}).once
     @scam.content = 'Gday'
   end
   
-  it 'should call #to_content(:whatever) when sent #to_<whatever>' do
-    @scam.should_receive(:to_content).with(:whatever).and_return('parsed')
+  it '#to_<whatever> should call #parsed_content(:whatever)' do
+    @scam.should_receive(:parsed_content).with(:whatever).once.and_return('parsed')
     @scam.to_whatever
   end
-  
-  it 'should raise RuntimeError when sent #to_<whatever>, if parse_to(:whatever) returns nil' do
-    @scam.stub!(:parse_to).and_return(nil)
-    lambda { @scam.to_whatever }.should raise_error(RuntimeError)
+    
+  it '#to_s should call #parsed_content with no args' do
+    @scam.should_receive(:parsed_content).once
+    @scam.to_s
   end
   
-  it { @scam.should respond_to(:to_whatever) }
+  it '#parsed_content(:whatever) should call #parse_to_whatever, if there is no cache' do
+    @scam.parsed_content_cache = {}
+    @scam.should_receive(:parse_to_whatever).once.and_return('parsed')
+    @scam.parsed_content(:whatever)
+  end
   
-  it 'should call #to_content when sent #to_s' do
-    @scam.should_receive(:to_content)
-    @scam.to_s
+  it '#parsed_content(:whatever) should return parsed_content_cache[:whatever], and not call #parse_to_whatever, if cache exists' do
+    @scam.parsed_content_cache[:whatever] = 'cached'
+    @scam.should_not_receive(:parse_to_whatever)
+    @scam.parsed_content(:whatever).should == 'cached'
+  end
+  
+  it '#parsed_content() should call #parse_to_<default_content_type>, if there is no cache' do
+    @scam.parsed_content_cache = {}
+    @scam.should_receive("parse_to_#{@scam.default_content_type}").once.and_return('parsed')
+    @scam.parsed_content
+  end
+
+  it '#parsed_content() should return parsed_content_cache[default_content_type], and not call #parse_to_<default_content_type>, if cache exists' do
+    @scam.parsed_content_cache[@scam.default_content_type] = 'cached'
+    @scam.should_not_receive("parse_to_#{@scam.default_content_type}")
+    @scam.parsed_content.should == 'cached'
   end
 end

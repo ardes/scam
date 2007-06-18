@@ -21,8 +21,27 @@ describe Product, " :scam association" do
 end
 
 describe Product, ".new" do
-  before { @scammable = Product.new }
+  before { @product = @scammable = Product.new }
   
   it_should_behave_like 'Scammable with scams not loaded'
 end
 
+describe Product, " with existing scam with cached parsed content" do
+  before do
+    p = Product.new
+    p.scam = 'Gday'
+    p.scam.parsed_content
+    p.save
+    @scam = Scam.find(p.scam.id)
+    @product = Product.find(p.id)
+  end
+  
+  it 'should be associated with correct scam' do
+    @product.scam.should == @scam
+  end
+  
+  it 'scam.to_s should not save the scam cache' do
+    @scam.should_not_receive(:save)
+    @product.scam.to_s.should == 'Gday'
+  end
+end

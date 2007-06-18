@@ -5,7 +5,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), 'scam'))
 describe MarukuScam do
   before { @scam = MarukuScam.new }
   
-  it_should_behave_like 'Scam'
+  it_should_behave_like 'All Scams'
   
   it 'should have default_content_type of :html' do
     @scam.default_content_type.should == :html
@@ -25,10 +25,8 @@ describe MarukuScam, ' saved, with no parsed_content' do
     @scam.to_s.should == "\n<h1 id='heading'>Heading</h1>\n"
   end
   
-  it 'should update parsed_content and save record with #to_html' do
-    @scam.should_receive(:save).once
-    @scam.to_html
-    @scam.parsed_content[:html].should == "\n<h1 id='heading'>Heading</h1>\n"
+  it 'should return parsed string with #to_string' do
+    @scam.to_string.should == 'Heading'
   end
 end
 

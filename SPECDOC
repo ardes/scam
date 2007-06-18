@@ -19,17 +19,19 @@ FunkyPage :simple association
 - should be saved when parent scammable saved
 
 MarukuScam
-- should set :parsed_content to {} when :content set
-- should call #to_content(:whatever) when sent #to_<whatever>
-- should raise RuntimeError when sent #to_<whatever>, if parse_to(:whatever) returns nil
-- should respond to #to_whatever
-- should call #to_content when sent #to_s
+- should set :parsed_content_cache to {} when :content set
+- #to_<whatever> should call #parsed_content(:whatever)
+- #to_s should call #parsed_content with no args
+- #parsed_content(:whatever) should call #parse_to_whatever, if there is no cache
+- #parsed_content(:whatever) should return parsed_content_cache[:whatever], and not call #parse_to_whatever, if cache exists
+- #parsed_content() should call #parse_to_<default_content_type>, if there is no cache
+- #parsed_content() should return parsed_content_cache[default_content_type], and not call #parse_to_<default_content_type>, if cache exists
 - should have default_content_type of :html
 
 MarukuScam saved, with no parsed_content
 - should return parsed html with #to_html
 - should return parsed html with #to_s
-- should update parsed_content and save record with #to_html
+- should return parsed string with #to_string
 
 MarukuScam saved, with parsed_content
 - should not save record with #to_html
@@ -67,31 +69,51 @@ Product :scam association
 Product.new
 - should not attempt to save scams on save
 
+Product with existing scam with cached parsed content
+- should be associated with correct scam
+- scam.to_s should not save the scam cache
+
 Scam class (migration helpers)
 - #drop_table should drop scams table
 - #create_table should create scams table and indexes
 
-Scam#to_content(:whatever) (without parsed_content[:whatever])
-- should call #parse_to_whatever
-- should call parse_to(:whatever) if #parse_whatever is undefined
-- should store the results of parse_to(:whetever) in parsed_content[:whatever] and save record
+Scam
+- #default_content_type should be :string
+- should respond to #to_string
+- should not respond to #to_whatever
+- should set :parsed_content_cache to {} when :content set
+- #to_<whatever> should call #parsed_content(:whatever)
+- #to_s should call #parsed_content with no args
+- #parsed_content(:whatever) should call #parse_to_whatever, if there is no cache
+- #parsed_content(:whatever) should return parsed_content_cache[:whatever], and not call #parse_to_whatever, if cache exists
+- #parsed_content() should call #parse_to_<default_content_type>, if there is no cache
+- #parsed_content() should return parsed_content_cache[default_content_type], and not call #parse_to_<default_content_type>, if cache exists
+- #parsed_content(:whatever) should raise NoMethodError if #parse_to_whatever is not defined
+- should return content.to_s with to_s
 
-Scam#to_content(:whatever) (with parsed_content[:whatever])
+Scam.new (without scammable)
+- #to_content(:whatever) should store result of parse BUT NOT save record
+
+Scam.new (with scammable)
+- should set :parsed_content_cache to {} when :content set
+- #to_<whatever> should call #parsed_content(:whatever)
+- #to_s should call #parsed_content with no args
+- #parsed_content(:whatever) should call #parse_to_whatever, if there is no cache
+- #parsed_content(:whatever) should return parsed_content_cache[:whatever], and not call #parse_to_whatever, if cache exists
+- #parsed_content() should call #parse_to_<default_content_type>, if there is no cache
+- #parsed_content() should return parsed_content_cache[default_content_type], and not call #parse_to_<default_content_type>, if cache exists
+- #to_content(:whatever) should store the results of parse AND save record
+
+Scam with parsed_content_cache[:whatever]
 - should return parsed_content[:whatever]
 - should not save record
 
-Scam.new
-- should set :parsed_content to {} when :content set
-- should call #to_content(:whatever) when sent #to_<whatever>
-- should raise RuntimeError when sent #to_<whatever>, if parse_to(:whatever) returns nil
-- should respond to #to_whatever
-- should call #to_content when sent #to_s
-- should return {} for #parsed_content
-- should return content.to_s with to_s
+Scam existing, with parsed content cache
+- #parsed_content should not call #parse_to_string
 
 Scammable module
 - should have scam_class_name of "Scam"
 
-Finished in 0.197187 seconds
+Finished in 0.257062 seconds
 
-59 examples, 0 failures
+75 examples, 0 failures

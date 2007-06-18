@@ -1,20 +1,25 @@
 class Scam < ActiveRecord::Base
   class_inheritable_accessor :default_content_type
+  self.default_content_type = :string
   
   belongs_to :scammable, :polymorphic => true
   
-  serialize :parsed_content
+  serialize :parsed_content_cache, Hash
   
   validates_presence_of :name
-  
-  # initialize parsed_content with {} on first read
-  def parsed_content
-    read_attribute(:parsed_content) || self.parsed_content = {}
+     
+  def default_content_type
+    self.class.default_content_type
   end
   
-  # reset parsed_content when content written
+  # lazy initialize parsedd_content_cache, so it can be used with abandon
+  def parsed_content_cache
+    unserialize_attribute('parsed_content_cache') || self.parsed_content_cache = {}
+  end
+  
+  # reset parsed_content_cache when content written
   def content=(content)
-    self.parsed_content = {}
+    self.parsed_content_cache = {}
     write_attribute(:content, content)
   end
   
@@ -22,33 +27,37 @@ class Scam < ActiveRecord::Base
   def name
     read_attribute(:name).to_sym rescue nil
   end
+  
+  def name=(a_name)
+    write_attribute(:name, a_name.to_sym.to_s)
+  end
       
   def method_missing(method, *args, &block)
     if method.to_s =~ /^to_(.+)$/
-      content_type = $1.to_sym
-      returning(to_content(content_type)) do |parsed|
-        raise RuntimeError, "Unknown content type #{content_type}" unless parsed
-      end
+      parsed_content($1.to_sym, *args)
     else
       super
     end
   end
 
   def respond_to?(method)
-    super || method.to_s =~ /^to_.+$/
+    super || (method.to_s =~ /^to_(.+)$/ && (parsed_content_cache[$1.to_sym] || respond_to?("parse_to_#{$1}")))
   end
   
-  def to_content(content_type = self.default_content_type)
-    content_type = content_type.to_sym if content_type.is_a?(String)
-    return parsed_content[content_type] if parsed_content[content_type]
-    parsed = content_type ? (send("parse_to_#{content_type}") rescue parse_to(content_type)) : parse_to(content_type)
-    returning parsed do |parsed|
-      update_attributes :parsed_content => self.parsed_content.merge(content_type => parsed)
+  # Returns the parsed content of specified type.  If it doesn't exist, then it is parsed.
+  # If this scam has an existing scammable, the parsed content is saved (if it isn't
+  # the the parsed content will be saved if and when the scammable is saved)
+  def parsed_content(content_type = default_content_type, *args)
+    content_type = content_type.to_sym
+    return parsed_content_cache[content_type] if parsed_content_cache[content_type]
+    returning send("parse_to_#{content_type}", *args) do |parsed|
+      self.parsed_content_cache[content_type] = parsed
+      save_without_timestamps if scammable && !scammable.new_record?
     end
   end
 
   def to_s
-    to_content
+    parsed_content
   end
   
   # Rake migration task to create the scam table
@@ -57,7 +66,7 @@ class Scam < ActiveRecord::Base
       t.integer :scammable_id
       t.string :type, :scammable_type, :name, :title
       t.text :content
-      t.binary :parsed_content
+      t.binary :parsed_content_cache
       t.timestamps
       yeild(t) if block_given?
     end
@@ -71,8 +80,16 @@ class Scam < ActiveRecord::Base
     connection.drop_table table_name
   end
   
+  def save_without_timestamps(*args)
+    saved = self.class.record_timestamps
+    self.class.record_timestamps = false
+    save(*args)
+  ensure
+    self.class.record_timestamps = saved
+  end
+  
 protected
-  def parse_to(content_type, content = self.content)
+  def parse_to_string(content = self.content)
     content.to_s
   end
 end
