@@ -20,12 +20,7 @@ FunkyPage :simple association
 
 MarukuScam
 - should set :parsed_content_cache to {} when :content set
-- #to_<whatever> should call #parsed_content(:whatever)
-- #to_<whatever>(*args) should call #parsed_content(:whatever, *args)
 - #to_s should call #parsed_content with no args
-- #parsed_content(:whatever) should call #parse_to_whatever, if there is no cache
-- #parsed_content(:whatever, *args) should call #parse_to_whatever(*args), if there is no cache
-- #parsed_content(:whatever) should return parsed_content_cache[:whatever], and not call #parse_to_whatever, if cache exists
 - #parsed_content() should call #parse_to_<default_content_type>, if there is no cache
 - #parsed_content() should return parsed_content_cache[default_content_type], and not call #parse_to_<default_content_type>, if cache exists
 - should have default_content_type of :html
@@ -84,28 +79,30 @@ Scam
 - should respond to #to_string
 - should not respond to #to_whatever
 - should set :parsed_content_cache to {} when :content set
-- #to_<whatever> should call #parsed_content(:whatever)
-- #to_<whatever>(*args) should call #parsed_content(:whatever, *args)
 - #to_s should call #parsed_content with no args
-- #parsed_content(:whatever) should call #parse_to_whatever, if there is no cache
-- #parsed_content(:whatever, *args) should call #parse_to_whatever(*args), if there is no cache
-- #parsed_content(:whatever) should return parsed_content_cache[:whatever], and not call #parse_to_whatever, if cache exists
 - #parsed_content() should call #parse_to_<default_content_type>, if there is no cache
 - #parsed_content() should return parsed_content_cache[default_content_type], and not call #parse_to_<default_content_type>, if cache exists
 - #parsed_content(:whatever) should raise NoMethodError if #parse_to_whatever is not defined
 - should return content.to_s with to_s
+
+Scam parsing
+- #to_<whatever> should call #parsed_content(:whatever)
+- #to_<whatever>(*args) should call #parsed_content(:whatever, *args)
+- when parsed_content_cache[:whatever] exists, #parsed_content(:whatever) should return caache, and not call #parse_to_whatever
+- when parsed_content_cache[[:whatever, *args]] exists, #parsed_content(:whatever, *args) cache, and not call #parse_to_whatever
+
+Scam parsing (when cache empty)
+- #parsed_content(:whatever) should call #parse_to_whatever
+- #parsed_content(:whatever) should cache #parse_to_whatever as :whatever
+- #parsed_content(:whatever, *args) should call #parse_to_whatever(*args)
+- #parsed_content(:whatever, *args) should cache #parse_to_whatever(*args) as [:whatever, *args]
 
 Scam.new (without scammable)
 - #to_content(:whatever) should store result of parse BUT NOT save record
 
 Scam.new (with scammable)
 - should set :parsed_content_cache to {} when :content set
-- #to_<whatever> should call #parsed_content(:whatever)
-- #to_<whatever>(*args) should call #parsed_content(:whatever, *args)
 - #to_s should call #parsed_content with no args
-- #parsed_content(:whatever) should call #parse_to_whatever, if there is no cache
-- #parsed_content(:whatever, *args) should call #parse_to_whatever(*args), if there is no cache
-- #parsed_content(:whatever) should return parsed_content_cache[:whatever], and not call #parse_to_whatever, if cache exists
 - #parsed_content() should call #parse_to_<default_content_type>, if there is no cache
 - #parsed_content() should return parsed_content_cache[default_content_type], and not call #parse_to_<default_content_type>, if cache exists
 - #to_content(:whatever) should store the results of parse AND save record
@@ -120,6 +117,6 @@ Scam existing, with parsed content cache
 Scammable module
 - should have scam_class_name of "Scam"
 
-Finished in 0.280733 seconds
+Finished in 0.250223 seconds
 
-81 examples, 0 failures
+74 examples, 0 failures

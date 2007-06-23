@@ -38,6 +38,58 @@ describe Scam do
   end
 end
 
+describe Scam, ' parsing' do
+  before { @scam = Scam.new }
+  
+  it '#to_<whatever> should call #parsed_content(:whatever)' do
+    @scam.should_receive(:parsed_content).with(:whatever).once.and_return('parsed')
+    @scam.to_whatever
+  end
+  
+  it '#to_<whatever>(*args) should call #parsed_content(:whatever, *args)' do
+    @scam.should_receive(:parsed_content).with(:whatever, :a, :b, :c).once.and_return('parsed')
+    @scam.to_whatever(:a, :b, :c)
+  end
+  
+  it 'when parsed_content_cache[:whatever] exists, #parsed_content(:whatever) should return caache, and not call #parse_to_whatever' do
+    @scam.parsed_content_cache[:whatever] = 'cached'
+    @scam.should_not_receive(:parse_to_whatever)
+    @scam.parsed_content(:whatever).should == 'cached'
+  end
+  
+  it 'when parsed_content_cache[[:whatever, *args]] exists, #parsed_content(:whatever, *args) cache, and not call #parse_to_whatever' do
+    @scam.parsed_content_cache[[:whatever, :a, :b, :c]] = 'cached'
+    @scam.should_not_receive(:parse_to_whatever)
+    @scam.parsed_content(:whatever, :a, :b, :c).should == 'cached'
+  end
+end
+
+describe Scam, ' parsing (when cache empty)' do
+  before { @scam = Scam.new }
+  
+  it '#parsed_content(:whatever) should call #parse_to_whatever' do
+    @scam.should_receive(:parse_to_whatever).once.and_return('parsed')
+    @scam.parsed_content(:whatever)
+  end
+
+  it '#parsed_content(:whatever) should cache #parse_to_whatever as :whatever' do
+    @scam.stub!(:parse_to_whatever).and_return('parsed')
+    @scam.parsed_content_cache.should_receive(:[]=).with([:whatever, :a, :b, :c], 'parsed')
+    @scam.parsed_content(:whatever, :a, :b, :c)
+  end
+  
+  it '#parsed_content(:whatever, *args) should call #parse_to_whatever(*args)' do
+    @scam.should_receive(:parse_to_whatever).with(:a, :b, :c).once.and_return('parsed')
+    @scam.parsed_content(:whatever, :a, :b, :c)
+  end
+  
+  it '#parsed_content(:whatever, *args) should cache #parse_to_whatever(*args) as [:whatever, *args]' do
+    @scam.stub!(:parse_to_whatever).and_return('parsed')
+    @scam.parsed_content_cache.should_receive(:[]=).with([:whatever, :a, :b, :c], 'parsed')
+    @scam.parsed_content(:whatever, :a, :b, :c)
+  end
+end
+
 describe Scam, '.new (without scammable)' do
   before { @scam = Scam.new }
   

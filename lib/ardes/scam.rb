@@ -12,7 +12,7 @@ class Scam < ActiveRecord::Base
     self.class.default_content_type
   end
   
-  # lazy initialize parsedd_content_cache, so it can be used with abandon
+  # lazy initialize parsed_content_cache, so it can be used with abandon
   def parsed_content_cache
     unserialize_attribute('parsed_content_cache') || self.parsed_content_cache = {}
   end
@@ -49,9 +49,10 @@ class Scam < ActiveRecord::Base
   # the the parsed content will be saved if and when the scammable is saved)
   def parsed_content(content_type = default_content_type, *args)
     content_type = content_type.to_sym
-    return parsed_content_cache[content_type] if parsed_content_cache[content_type]
+    key = (args.size == 0 ? content_type : [content_type, *args])
+    return parsed_content_cache[key] if parsed_content_cache[key]
     returning send("parse_to_#{content_type}", *args) do |parsed|
-      self.parsed_content_cache[content_type] = parsed
+      self.parsed_content_cache[key] = parsed
       save_without_timestamps if scammable && !scammable.new_record?
     end
   end

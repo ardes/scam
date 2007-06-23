@@ -12,6 +12,10 @@ task :default => :spec
 
 task :cruise => "spec:rcov:verify"
 
+task :pre_commit => [:cruise, 'spec:doc'] do
+  puts "\nOK to commit"
+end
+
 desc "Run the specs for #{plugin_name}"
 Spec::Rake::SpecTask.new(:spec) do |t|
   t.spec_files = FileList['spec/**/*_spec.rb']
