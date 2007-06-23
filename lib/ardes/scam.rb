@@ -89,7 +89,7 @@ class Scam < ActiveRecord::Base
   end
   
 protected
-  def parse_to_string(content = self.content)
+  def parse_to_string
     content.to_s
   end
 end
