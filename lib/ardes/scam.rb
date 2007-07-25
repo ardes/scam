@@ -69,7 +69,7 @@ class Scam < ActiveRecord::Base
   
   # directly removes all content caches from the database
   def self.expire_cache
-    update_all ['parsed_content_cache = ?', {}]
+    update_all ['parsed_content_cache = ?', {}] rescue nil
   end
   
   def to_s
