@@ -106,6 +106,7 @@ Scam.new (with scammable)
 - #parsed_content() should call #parse_to_<default_content_type>, if there is no cache
 - #parsed_content() should return parsed_content_cache[default_content_type], and not call #parse_to_<default_content_type>, if cache exists
 - #to_content(:whatever) should store the results of parse AND save record
+- #expire_cache should just remove parsed_content_cache without attempting save
 
 Scam with parsed_content_cache[:whatever]
 - should return parsed_content[:whatever]
@@ -113,10 +114,17 @@ Scam with parsed_content_cache[:whatever]
 
 Scam existing, with parsed content cache
 - #parsed_content should not call #parse_to_string
+- #expire_cache should remove the cache directly from the database
+
+Scam existing, with parsed content cahce, when Scam.caching = false
+- #parsed_content should call #parse_to_string
+
+Scam.expire_cache
+- should remove the parsed_content_cache from every scam
 
 Scammable module
 - should have scam_class_name of "Scam"
 
-Finished in 0.250223 seconds
+Finished in 0.290289 seconds
 
-74 examples, 0 failures
+78 examples, 0 failures

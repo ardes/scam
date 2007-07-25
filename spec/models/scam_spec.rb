@@ -115,6 +115,13 @@ describe Scam, '.new (with scammable)' do
     @scam.parsed_content(:whatever)
     @scam.parsed_content_cache[:whatever].should == 'parsed'
   end
+  
+  it '#expire_cache should just remove parsed_content_cache without attempting save' do
+    @scam.parsed_content_cache = {:stuff => 'stuff'}
+    @scam.should_not_receive :save
+    @scam.expire_cache
+    @scam.parsed_content_cache.should == {}
+  end
 end
 
 describe Scam, ' with parsed_content_cache[:whatever]' do
@@ -145,6 +152,48 @@ describe Scam, ' existing, with parsed content cache' do
     @scam.should_not_receive(:parse_to_string)
     @scam.parsed_content.should == 'gday'
   end
+  
+  it '#expire_cache should remove the cache directly from the database' do
+    @scam.expire_cache
+    @scam.parsed_content_cache.should == {}
+    Scam.find(@scam.id).parsed_content_cache.should == {}
+  end
 end
     
+describe Scam, ' existing, with parsed content cahce, when Scam.caching = false' do
+  before do
+    s = Scam.new :name => :scam, :content => 'gday'
+    s.parsed_content
+    s.save
+    @scam = Scam.find(s.id)
+    Scam.caching = false
+  end
   
+  after do
+    Scam.caching = true
+  end
+  
+  it '#parsed_content should call #parse_to_string' do
+    @scam.should_receive(:parse_to_string).and_return('parsed')
+    @scam.parsed_content.should == 'parsed'
+  end
+end
+
+describe Scam, '.expire_cache' do
+  before do
+    @s1 = Scam.new :name => :scam1, :content => 'gday'
+    @s1.parsed_content
+    @s1.save
+    @s2 = Scam.new :name => :scam2, :content => 'foo'
+    @s2.parsed_content
+    @s2.save
+  end
+  
+  it 'should remove the parsed_content_cache from every scam' do
+    Scam.find(@s1.id).parsed_content_cache.should == {:string => "gday"}
+    Scam.find(@s2.id).parsed_content_cache.should == {:string => 'foo'}
+    Scam.expire_cache
+    Scam.find(@s1.id).parsed_content_cache.should == {}
+    Scam.find(@s2.id).parsed_content_cache.should == {}
+  end
+end

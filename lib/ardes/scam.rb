@@ -1,4 +1,7 @@
 class Scam < ActiveRecord::Base
+  cattr_accessor :caching
+  self.caching = true
+  
   class_inheritable_accessor :default_content_type
   self.default_content_type = :string
   
@@ -48,15 +51,27 @@ class Scam < ActiveRecord::Base
   # If this scam has an existing scammable, the parsed content is saved (if it isn't
   # the the parsed content will be saved if and when the scammable is saved)
   def parsed_content(content_type = default_content_type, *args)
+    return send("parse_to_#{content_type}", *args) unless self.class.caching
+    
     content_type = content_type.to_sym
     key = (args.size == 0 ? content_type : [content_type, *args])
     return parsed_content_cache[key] if parsed_content_cache[key]
     returning send("parse_to_#{content_type}", *args) do |parsed|
-      self.parsed_content_cache[key] = parsed
-      save_without_timestamps if scammable && !scammable.new_record?
+      store_parsed_content(key, parsed)
     end
   end
 
+  # directly removes the content cache from the database for this record if the record is saved
+  def expire_cache
+    self.class.update_all(['parsed_content_cache = ?', {}], ['id = ?', id]) unless new_record?
+    self.parsed_content_cache = {}
+  end
+  
+  # directly removes all content caches from the database
+  def self.expire_cache
+    update_all ['parsed_content_cache = ?', {}]
+  end
+  
   def to_s
     parsed_content
   end
@@ -92,5 +107,10 @@ class Scam < ActiveRecord::Base
 protected
   def parse_to_string
     content.to_s
+  end
+  
+  def store_parsed_content(key, parsed)
+    self.parsed_content_cache[key] = parsed
+    save_without_timestamps if scammable && !scammable.new_record?
   end
 end
