@@ -44,4 +44,9 @@ describe Product, " with existing scam with cached parsed content" do
     @scam.should_not_receive(:save)
     @product.scam.to_s.should == 'Gday'
   end
+  
+  it 'should destroy scams when destroyed' do
+    @product.destroy
+    lambda { Scam.find(@scam.id) }.should raise_error(ActiveRecord::RecordNotFound)
+  end
 end

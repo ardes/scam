@@ -69,6 +69,7 @@ Product.new
 Product with existing scam with cached parsed content
 - should be associated with correct scam
 - scam.to_s should not save the scam cache
+- should destroy scams when destroyed
 
 Scam class (migration helpers)
 - #drop_table should drop scams table
@@ -125,6 +126,6 @@ Scam.expire_cache
 Scammable module
 - should have scam_class_name of "Scam"
 
-Finished in 0.290289 seconds
+Finished in 0.298188 seconds
 
-78 examples, 0 failures
+79 examples, 0 failures
