@@ -18,11 +18,11 @@ describe MarukuScam, ' saved, with no parsed_content' do
   end
   
   it 'should return parsed html with #to_html' do
-    @scam.to_html.should == "\n<h1 id='heading'>Heading</h1>\n"
+    @scam.to_html.should == "<h1 id='heading'>Heading</h1>"
   end
   
   it 'should return parsed html with #to_s' do
-    @scam.to_s.should == "\n<h1 id='heading'>Heading</h1>\n"
+    @scam.to_s.should == "<h1 id='heading'>Heading</h1>"
   end
   
   it 'should return parsed string with #to_string' do
