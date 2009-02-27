@@ -1,9 +1,9 @@
 class Scam < ActiveRecord::Base
-  include Ardes::Scam
+  include Scam
 end
 
 class MarukuScam < Scam
-  include Ardes::MarukuScam
+  include Scam::Maruku
 end
 
 ActiveRecord::Migration.suppress_messages do

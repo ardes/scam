@@ -1,8 +1,8 @@
-module Ardes
-  module MarukuScam
+module Scam
+  module Maruku
     def self.included(base)
       base.class_eval do
-        include Ardes::Scam unless included_modules.include?(Ardes::Scam)
+        include Scam unless included_modules.include?(Scam)
         self.default_content_type = :html
       end
     end
