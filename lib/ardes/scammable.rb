@@ -2,11 +2,10 @@
 module Scammable
   # the default scam class for all ActiveRecords (can be overridden on a per class basis)
   mattr_accessor :scam_class_name
-  
   self.scam_class_name = 'Scam'
   
   def has_scam(*names)
-    include InstanceMethods unless included_modules.include? Scammable::InstanceMethods
+    extend ClassMethods unless extended_by.include?(Scammable::ClassMethods)
     options = names.last.is_a?(Hash) ? names.pop : {}
     names = [:scam] if names.size == 0
     names.each {|name| add_scam(name.to_sym, options)}
@@ -14,7 +13,7 @@ module Scammable
 
   alias_method :has_scams, :has_scam
   
-  # set the default scam class for this AciveRecord and its descendents
+  # set the default scam class for this ActiveRecord and its descendents
   def scam_class_name=(class_name)
     write_inheritable_attribute(:scam_class_name, class_name)
   end
@@ -23,20 +22,14 @@ module Scammable
   def scam_class_name
     read_inheritable_attribute(:scam_class_name) || write_inheritable_attribute(:scam_class_name, Scammable.scam_class_name)
   end
-  
-  module InstanceMethods
-    def self.included(base)
+
+  module ClassMethods
+    def self.extended(base)
       base.class_eval do
-        extend ClassMethods
+        delegate :scam_names, :to => 'self.class'
       end
     end
     
-    def scam_names
-      self.class.scam_names
-    end
-  end
-
-  module ClassMethods
     def scam_names
       read_inheritable_attribute(:scam_names) || write_inheritable_attribute(:scam_names, [])
     end

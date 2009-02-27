@@ -1,3 +1,11 @@
+class Scam < ActiveRecord::Base
+  include Ardes::Scam
+end
+
+class MarukuScam < Scam
+  include Ardes::MarukuScam
+end
+
 ActiveRecord::Migration.suppress_messages do
   ActiveRecord::Schema.define(:version => 0) do
     Scam.create_table :force => true

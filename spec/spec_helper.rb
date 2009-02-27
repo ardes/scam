@@ -1,9 +1,17 @@
-# This file is copied to ~/spec when you run 'ruby script/generate rspec'
-# from the project root directory.
 ENV["RAILS_ENV"] ||= "test"
-require File.expand_path(File.join(File.dirname(__FILE__), "../../../../config/environment"))
-require 'spec/rails'
+__DIR__ = File.dirname(__FILE__)
 
-Spec::Runner.configure do |config|
- # simple aint it.
+require 'rubygems'
+
+# if we're in a rails env, use that, otherwise use rubygems to create a spec env
+begin
+  require "#{__DIR__}/../../../../config/environment"
+rescue LoadError
+  require 'activesupport'
+  require 'activerecord'
+  $LOAD_PATH << "#{__DIR__}/../lib"
+  require "#{__DIR__}/../init"
 end
+
+require 'spec'
+require 'maruku'
