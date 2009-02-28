@@ -101,9 +101,10 @@ module Ardes
       parsed_content
     end
   
-    def save_without_timestamps(*args)
+    # turn timestamping off in a threadsafe manner
+    def without_timestamps(&block)
       metaclass.send(:define_method, :record_timestamps) { false }
-      save(*args)
+      yield
     ensure
       metaclass.send(:remove_method, :record_timestamps)
     end
@@ -115,7 +116,9 @@ module Ardes
   
     def store_parsed_content(key, parsed)
       self.parsed_content_cache[key] = parsed
-      save_without_timestamps if scammable && !scammable.new_record?
+      without_timestamps do
+        save if scammable && !scammable.new_record?
+      end
     end
   end
 end
