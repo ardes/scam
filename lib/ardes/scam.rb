@@ -1,6 +1,6 @@
 module Ardes
   module Scam
-    cattr_accessor :caching
+    mattr_accessor :caching
     self.caching = true
   
     def self.included(base)
@@ -102,11 +102,10 @@ module Ardes
     end
   
     def save_without_timestamps(*args)
-      saved = self.class.record_timestamps
-      self.class.record_timestamps = false
+      metaclass.send(:define_method, :record_timestamps) { false }
       save(*args)
     ensure
-      self.class.record_timestamps = saved
+      metaclass.send(:remove_method, :record_timestamps)
     end
   
   protected

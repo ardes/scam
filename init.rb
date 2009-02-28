@@ -1,3 +1,5 @@
 require 'ardes/scammable'
+require 'ardes/scam'
+require 'ardes/scam/maruku'
 
-ActiveRecord::Base.send :extend, Scammable
+ActiveRecord::Base.extend Ardes::Scammable
