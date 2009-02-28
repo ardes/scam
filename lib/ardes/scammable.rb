@@ -40,7 +40,7 @@ module Ardes
         raise RuntimeError, "Scam #{name} is already declared in #{self.name}" if scam_names.include? name
         scam_names << name
         scam_class_name = options.delete(:class_name) || self.scam_class_name
-        has_one name, options.reverse_merge(:as => :scammable, :class_name => scam_class_name, :dependent => :destroy, :conditions => ["#{Scam.table_name}.name = ?", name.to_s])
+        has_one name, options.reverse_merge(:as => :scammable, :class_name => scam_class_name, :dependent => :destroy, :conditions => ["\#{#{scam_class_name}.table_name}.name = ?", name.to_s])
       
         class_eval <<-end_eval, __FILE__, __LINE__
           def #{name}_with_build(*args)
