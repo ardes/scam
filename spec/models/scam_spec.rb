@@ -161,17 +161,17 @@ describe Scam, ' existing, with parsed content cache' do
   end
 end
     
-describe Scam, ' existing, with parsed content cahce, when Scam.caching = false' do
+describe Scam, ' existing, with parsed content cahce, when Scam.cache_parsed_content = false' do
   before do
     s = Scam.new :name => :scam, :content => 'gday'
     s.parsed_content
     s.save
     @scam = Scam.find(s.id)
-    Scam.caching = false
+    Scam.cache_parsed_content = false
   end
   
   after do
-    Scam.caching = true
+    Scam.cache_parsed_content = true
   end
   
   it '#parsed_content should call #parse_to_string' do
