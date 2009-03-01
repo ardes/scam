@@ -100,10 +100,10 @@ module Ardes
   
     # turn timestamping off in a threadsafe manner
     def without_timestamps(&block)
-      metaclass.send(:define_method, :record_timestamps) { false }
+      class << self; def record_timestamps; false; end; end
       yield
     ensure
-      metaclass.send(:remove_method, :record_timestamps)
+      class << self; remove_method :record_timestamps; end
     end
   
   protected
