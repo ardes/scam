@@ -1,6 +1,7 @@
-require File.expand_path(File.join(File.dirname(__FILE__), '../spec_helper'))
-require File.expand_path(File.join(File.dirname(__FILE__), '../app'))
-require File.expand_path(File.join(File.dirname(__FILE__), 'scam_association'))
+__DIR__ = File.expand_path(File.dirname(__FILE__))
+require File.expand_path("#{__DIR__}/../spec_helper")
+require File.expand_path("#{__DIR__}/../app")
+require File.expand_path("#{__DIR__}/scam_association_shared")
 
 describe FunkyPage, "class (< Page | has_scam :funk | has_scam :simple, :class_name => 'Scam')" do
   it 'should have scam_names [:content, :sidebar, :funk, :simple]' do

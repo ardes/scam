@@ -1,6 +1,7 @@
-require File.expand_path(File.join(File.dirname(__FILE__), '../spec_helper'))
-require File.expand_path(File.join(File.dirname(__FILE__), '../app'))
-require File.expand_path(File.join(File.dirname(__FILE__), 'scam_association'))
+__DIR__ = File.dirname(__FILE__)
+require File.expand_path("#{__DIR__}/../spec_helper")
+require File.expand_path("#{__DIR__}/../app")
+require File.expand_path("#{__DIR__}/scam_association_shared")
 
 describe Page, "class | scam_class_name = 'MarukuScam' | has_scams :content, :sidebar" do
   it 'should have scam_names [:content, :sidebar]' do
