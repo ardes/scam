@@ -3,13 +3,10 @@ __DIR__ = File.dirname(__FILE__)
 
 require 'rubygems'
 
+# use rails env if it exists, otherwise make one from gems
 begin
-  # load rails env if it exists
   require "#{__DIR__}/../../../../config/environment"
-  
 rescue LoadError
-  # otherwise build an env using gems, and loading libs
-  require 'activesupport'
   require 'activerecord'
   $LOAD_PATH << "#{__DIR__}/../lib"
   require "#{__DIR__}/../init"
@@ -20,4 +17,4 @@ require 'maruku'
 
 # use local db and log
 ActiveRecord::Base.logger = Logger.new("#{__DIR__}/log/test.log")
-ActiveRecord::Base.establish_connection(:adapter => 'sqlite3', :dbfile => "#{__DIR__}/db/test.sqlite3")
+ActiveRecord::Base.establish_connection(YAML.load(File.read("#{__DIR__}/db/database.yml"))['test'])
