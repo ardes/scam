@@ -10,11 +10,9 @@ rescue LoadError
   require 'activerecord'
   $LOAD_PATH << "#{__DIR__}/../lib"
   require "#{__DIR__}/../init"
+  ActiveRecord::Base.logger = Logger.new("#{__DIR__}/log/test.log")
+  ActiveRecord::Base.establish_connection(YAML.load(File.read("#{__DIR__}/db/database.yml"))['test'])
 end
 
 require 'spec'
 require 'maruku'
-
-# use local db and log
-ActiveRecord::Base.logger = Logger.new("#{__DIR__}/log/test.log")
-ActiveRecord::Base.establish_connection(YAML.load(File.read("#{__DIR__}/db/database.yml"))['test'])
