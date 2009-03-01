@@ -30,3 +30,11 @@ namespace :rcov do
     t.index_html = File.join(File.dirname(__FILE__), 'doc/coverage/index.html')
   end
 end
+
+begin
+  require 'garlic/tasks'
+  
+  task :cruise => 'garlic:all'
+
+rescue LoadError
+end
