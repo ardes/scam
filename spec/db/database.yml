@@ -1,3 +1,5 @@
 test:
-  adapter: sqlite3
-  dbfile: spec/db/test.sqlite3
+  adapter: mysql
+  username: root
+  database: scam_test
+  socket: /tmp/mysql.sock

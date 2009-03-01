@@ -20,6 +20,11 @@ garlic do
         plugin "rspec-rails" do
           `script/generate rspec -f`
         end
+        
+        File.open("config/database.yml", "w") do |f|
+          f << {'test' => {'adapter' => 'mysql', 'username' => 'root', 'database' => 'scam_test', 'socket' => '/tmp/mysql.sock'}}.to_yaml
+        end
+        `rake db:create RAILS_ENV=test`
       end
     
       run do
