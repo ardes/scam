@@ -9,11 +9,11 @@ module Ardes
       end
   
       def parse_to_html
-        Maruku.new(content).to_html
+        ::Maruku.new(content).to_html
       end
   
       def parse_to_string
-        Maruku.new(content).to_s
+        ::Maruku.new(content).to_s
       end
     end
   end
