@@ -1,20 +1,17 @@
 module Ardes
   module Scam
-    mattr_accessor :caching
-    self.caching = true
-  
     def self.included(base)
       base.class_eval do
         extend ClassMethods
 
-        class_inheritable_accessor :default_content_type
+        class_inheritable_accessor :default_content_type, :cache_parsed_content
         self.default_content_type = :string
+        self.cache_parsed_content = true
+        delegate :default_content_type, :cache_parsed_content, :to => 'self.class'
 
         belongs_to :scammable, :polymorphic => true
         serialize :parsed_content_cache, Hash
         validates_presence_of :name
-
-        delegate :default_content_type, :to => 'self.class'
       end
     end
   
@@ -81,7 +78,7 @@ module Ardes
     # If this scam has an existing scammable, the parsed content is saved (if it isn't
     # the the parsed content will be saved if and when the scammable is saved)
     def parsed_content(content_type = default_content_type, *args)
-      return send("parse_to_#{content_type}", *args) unless self.class.caching
+      return send("parse_to_#{content_type}", *args) unless cache_parsed_content
     
       content_type = content_type.to_sym
       key = (args.size == 0 ? content_type : [content_type, *args])
