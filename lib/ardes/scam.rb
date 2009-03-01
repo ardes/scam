@@ -12,6 +12,9 @@ module Ardes
         belongs_to :scammable, :polymorphic => true
         serialize :parsed_content_cache, Hash
         validates_presence_of :name
+        
+        alias_method_chain :respond_to?, :scam
+        alias_method_chain :method_missing, :scam
       end
     end
   
@@ -62,18 +65,6 @@ module Ardes
       write_attribute(:name, a_name.to_sym.to_s)
     end
       
-    def method_missing(method, *args, &block)
-      if method.to_s =~ /^to_(.+)$/
-        parsed_content($1.to_sym, *args)
-      else
-        super
-      end
-    end
-
-    def respond_to?(method)
-      super || (method.to_s =~ /^to_(.+)$/ && (parsed_content_cache[$1.to_sym] || respond_to?("parse_to_#{$1}")))
-    end
-  
     # Returns the parsed content of specified type.  If it doesn't exist, then it is parsed.
     # If this scam has an existing scammable, the parsed content is saved (if it isn't
     # the the parsed content will be saved if and when the scammable is saved)
@@ -106,7 +97,19 @@ module Ardes
       class << self; remove_method :record_timestamps; end
     end
   
+    def respond_to_with_scam?(method, include_private = false)
+      respond_to_without_scam?(method, include_private) || (method.to_s =~ /^to_(.+)$/ && respond_to_without_scam?("parse_to_#{$1}"))
+    end
+  
   protected
+    def method_missing_with_scam(method, *args, &block)
+      if method.to_s =~ /^to_(.+)$/
+        parsed_content($1.to_sym, *args)
+      else
+        method_missing_without_scam(method, *args, &block)
+      end
+    end
+
     def parse_to_string
       content.to_s
     end
